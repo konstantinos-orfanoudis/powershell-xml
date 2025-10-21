@@ -1,0 +1,183 @@
+[2025-09-04T14:47:14.650Z] 🔔 Ping from GET /api/parse
+[2025-09-04T14:52:17.420Z] 🔔 Ping
+[2025-09-04T14:56:10.261Z] 🚀 POST /api/parse
+[2025-09-04T14:56:10.261Z] content-type=text/plain
+[2025-09-04T14:56:10.261Z] bodyLength=17641
+[2025-09-04T14:56:10.264Z] ℹ️ Functions found: 6
+[2025-09-04T14:56:10.266Z] ⚡ Create-User: inputs=0
+[2025-09-04T14:56:10.268Z] ⚡ Delete-User: inputs=0
+[2025-09-04T14:56:10.270Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T14:56:10.272Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T14:56:10.274Z] ⚡ Get-Users: inputs=0
+[2025-09-04T14:56:10.276Z] ⚡ Update-User: inputs=0
+[2025-09-04T14:56:10.278Z] ✅ Done. Total functions: 6
+[2025-09-04T15:04:42.637Z] 👋 GET /api/parse hit
+[2025-09-04T15:04:42.642Z] 🔔 Ping
+[2025-09-04T15:04:44.890Z] 👋 GET /api/parse hit
+[2025-09-04T15:04:44.893Z] 📍 where requested -> C:\Users\aiuser\Desktop\powershell-parser\logs\ps-parser.log
+[2025-09-04T15:05:11.657Z] 🚀 POST /api/parse
+[2025-09-04T15:05:11.657Z] content-type=text/plain
+[2025-09-04T15:05:11.657Z] bodyLength=17641
+[2025-09-04T15:05:11.661Z] ℹ️ Functions found: 6
+[2025-09-04T15:05:11.663Z] ⚡ Create-User: inputs=0
+[2025-09-04T15:05:11.665Z] ⚡ Delete-User: inputs=0
+[2025-09-04T15:05:11.667Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T15:05:11.669Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T15:05:11.670Z] ⚡ Get-Users: inputs=0
+[2025-09-04T15:05:11.673Z] ⚡ Update-User: inputs=0
+[2025-09-04T15:05:11.676Z] Summary
+[2025-09-04T15:05:11.678Z] function	inputs	sample
+[2025-09-04T15:05:11.678Z] Create-User	0	
+[2025-09-04T15:05:11.678Z] Delete-User	0	
+[2025-09-04T15:05:11.678Z] Get-Roles	0	
+[2025-09-04T15:05:11.678Z] Get-UserRoleMemberships	0	
+[2025-09-04T15:05:11.678Z] Get-Users	0	
+[2025-09-04T15:05:11.678Z] Update-User	0	
+[2025-09-04T15:05:11.679Z] ✅ Done. Total functions: 6
+[2025-09-04T15:09:07.880Z] 🚀 POST /api/parse
+[2025-09-04T15:09:07.880Z] content-type=text/plain
+[2025-09-04T15:09:07.880Z] bodyLength=17641
+[2025-09-04T15:09:07.884Z] ℹ️ Functions found: 6
+[2025-09-04T15:09:07.887Z] ⚡ Create-User: inputs=1
+[2025-09-04T15:09:07.889Z]    → Inputs: $true:any
+[2025-09-04T15:09:07.891Z] ⚡ Delete-User: inputs=0
+[2025-09-04T15:09:07.893Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T15:09:07.894Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T15:09:07.896Z] ⚡ Get-Users: inputs=1
+[2025-09-04T15:09:07.898Z]    → Inputs: $true:any
+[2025-09-04T15:09:07.899Z] ⚡ Update-User: inputs=0
+[2025-09-04T15:09:07.901Z] Summary
+[2025-09-04T15:09:07.904Z] function	inputs	sample
+[2025-09-04T15:09:07.904Z] Create-User	1	$true
+[2025-09-04T15:09:07.904Z] Delete-User	0	
+[2025-09-04T15:09:07.904Z] Get-Roles	0	
+[2025-09-04T15:09:07.904Z] Get-UserRoleMemberships	0	
+[2025-09-04T15:09:07.904Z] Get-Users	1	$true
+[2025-09-04T15:09:07.904Z] Update-User	0	
+[2025-09-04T15:09:07.906Z] ✅ Done. Total functions: 6
+[2025-09-04T15:13:36.063Z] 🚀 POST /api/parse
+[2025-09-04T15:13:36.063Z] content-type=text/plain
+[2025-09-04T15:13:36.063Z] bodyLength=17641
+[2025-09-04T15:13:36.069Z] ℹ️ Functions found: 6
+[2025-09-04T15:13:36.071Z] ⚡ Create-User: inputs=6
+[2025-09-04T15:13:36.073Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:13:36.075Z] ⚡ Delete-User: inputs=0
+[2025-09-04T15:13:36.076Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T15:13:36.078Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T15:13:36.080Z] ⚡ Get-Users: inputs=6
+[2025-09-04T15:13:36.082Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:13:36.083Z] ⚡ Update-User: inputs=0
+[2025-09-04T15:13:36.086Z] Summary
+[2025-09-04T15:13:36.088Z] function	inputs	sample
+[2025-09-04T15:13:36.088Z] Create-User	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:13:36.088Z] Delete-User	0	
+[2025-09-04T15:13:36.088Z] Get-Roles	0	
+[2025-09-04T15:13:36.088Z] Get-UserRoleMemberships	0	
+[2025-09-04T15:13:36.088Z] Get-Users	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:13:36.088Z] Update-User	0	
+[2025-09-04T15:13:36.090Z] ✅ Done. Total functions: 6
+[2025-09-04T15:40:11.122Z] 🚀 POST /api/parse
+[2025-09-04T15:40:11.122Z] content-type=text/plain
+[2025-09-04T15:40:11.122Z] bodyLength=17641
+[2025-09-04T15:40:11.130Z] ℹ️ Functions found: 6
+[2025-09-04T15:40:11.132Z] ⚡ Create-User: inputs=6
+[2025-09-04T15:40:11.134Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:40:11.136Z] ⚡ Delete-User: inputs=0
+[2025-09-04T15:40:11.139Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T15:40:11.141Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T15:40:11.143Z] ⚡ Get-Users: inputs=6
+[2025-09-04T15:40:11.145Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:40:11.148Z] ⚡ Update-User: inputs=0
+[2025-09-04T15:40:11.151Z] Summary
+[2025-09-04T15:40:11.153Z] function	inputs	sample
+[2025-09-04T15:40:11.153Z] Create-User	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:40:11.153Z] Delete-User	0	
+[2025-09-04T15:40:11.153Z] Get-Roles	0	
+[2025-09-04T15:40:11.153Z] Get-UserRoleMemberships	0	
+[2025-09-04T15:40:11.153Z] Get-Users	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:40:11.153Z] Update-User	0	
+[2025-09-04T15:40:11.155Z] ✅ Done. Total functions: 6
+[2025-09-04T15:51:26.779Z] 🚀 POST /api/parse
+[2025-09-04T15:51:26.779Z] content-type=text/plain
+[2025-09-04T15:51:26.779Z] bodyLength=17641
+[2025-09-04T15:51:26.785Z] ℹ️ Functions found: 6
+[2025-09-04T15:51:26.787Z] ⚡ Create-User: inputs=6
+[2025-09-04T15:51:26.789Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:51:26.790Z] ⚡ Delete-User: inputs=0
+[2025-09-04T15:51:26.793Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T15:51:26.795Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T15:51:26.798Z] ⚡ Get-Users: inputs=6
+[2025-09-04T15:51:26.800Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:51:26.802Z] ⚡ Update-User: inputs=0
+[2025-09-04T15:51:26.805Z] Summary
+[2025-09-04T15:51:26.807Z] function	inputs	sample
+[2025-09-04T15:51:26.807Z] Create-User	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:51:26.807Z] Delete-User	0	
+[2025-09-04T15:51:26.807Z] Get-Roles	0	
+[2025-09-04T15:51:26.807Z] Get-UserRoleMemberships	0	
+[2025-09-04T15:51:26.807Z] Get-Users	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:51:26.807Z] Update-User	0	
+[2025-09-04T15:51:26.809Z] ✅ Done. Total functions: 6
+[2025-09-04T15:58:46.340Z] 🚀 POST /api/parse
+[2025-09-04T15:58:46.340Z] content-type=text/plain
+[2025-09-04T15:58:46.340Z] bodyLength=17641
+[2025-09-04T15:58:46.347Z] ℹ️ Functions found: 6
+[2025-09-04T15:58:46.349Z] ⚡ Create-User: inputs=6
+[2025-09-04T15:58:46.351Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:58:46.354Z] ⚡ Delete-User: inputs=0
+[2025-09-04T15:58:46.356Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T15:58:46.358Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T15:58:46.360Z] ⚡ Get-Users: inputs=6
+[2025-09-04T15:58:46.362Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T15:58:46.364Z] ⚡ Update-User: inputs=0
+[2025-09-04T15:58:46.365Z] Summary
+[2025-09-04T15:58:46.367Z] function	inputs	sample
+[2025-09-04T15:58:46.367Z] Create-User	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:58:46.367Z] Delete-User	0	
+[2025-09-04T15:58:46.367Z] Get-Roles	0	
+[2025-09-04T15:58:46.367Z] Get-UserRoleMemberships	0	
+[2025-09-04T15:58:46.367Z] Get-Users	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T15:58:46.367Z] Update-User	0	
+[2025-09-04T15:58:46.369Z] ✅ Done. Total functions: 6
+[2025-09-04T16:23:01.281Z] 🚀 POST /api/parse
+[2025-09-04T16:23:01.281Z] content-type=text/plain
+[2025-09-04T16:23:01.281Z] bodyLength=17641
+[2025-09-04T16:23:01.285Z] ℹ️ Functions found: 6
+[2025-09-04T16:23:01.287Z] ⚡ Create-User: inputs=6
+[2025-09-04T16:23:01.289Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T16:23:01.291Z] ⚡ Delete-User: inputs=0
+[2025-09-04T16:23:01.293Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T16:23:01.294Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T16:23:01.296Z] ⚡ Get-Users: inputs=6
+[2025-09-04T16:23:01.298Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T16:23:01.300Z] ⚡ Update-User: inputs=0
+[2025-09-04T16:23:01.302Z] Summary
+[2025-09-04T16:23:01.304Z] function	inputs	sample
+[2025-09-04T16:23:01.304Z] Create-User	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T16:23:01.304Z] Delete-User	0	
+[2025-09-04T16:23:01.304Z] Get-Roles	0	
+[2025-09-04T16:23:01.304Z] Get-UserRoleMemberships	0	
+[2025-09-04T16:23:01.304Z] Get-Users	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T16:23:01.304Z] Update-User	0	
+[2025-09-04T16:23:01.308Z] ✅ Done. Total functions: 6
+[2025-09-04T19:21:28.935Z] 🚀 POST /api/parse
+[2025-09-04T19:21:28.935Z] content-type=text/plain
+[2025-09-04T19:21:28.935Z] bodyLength=17641
+[2025-09-04T19:21:28.940Z] ℹ️ Functions found: 6
+[2025-09-04T19:21:28.942Z] ⚡ Create-User: inputs=6
+[2025-09-04T19:21:28.945Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T19:21:28.946Z] ⚡ Delete-User: inputs=0
+[2025-09-04T19:21:28.949Z] ⚡ Get-Roles: inputs=0
+[2025-09-04T19:21:28.951Z] ⚡ Get-UserRoleMemberships: inputs=0
+[2025-09-04T19:21:28.953Z] ⚡ Get-Users: inputs=6
+[2025-09-04T19:21:28.954Z]    → Inputs: $SqlServer:String, $SqlDatabase:String, $username:String, $password:String, $UserID:string, $ObjectClass:string
+[2025-09-04T19:21:28.956Z] ⚡ Update-User: inputs=0
+[2025-09-04T19:21:28.958Z] Summary
+[2025-09-04T19:21:28.960Z] function	inputs	sample
+[2025-09-04T19:21:28.960Z] Create-User	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T19:21:28.960Z] Delete-User	0	
+[2025-09-04T19:21:28.960Z] Get-Roles	0	
+[2025-09-04T19:21:28.960Z] Get-UserRoleMemberships	0	
+[2025-09-04T19:21:28.960Z] Get-Users	6	$SqlServer, $SqlDatabase, $username
+[2025-09-04T19:21:28.960Z] Update-User	0	
+[2025-09-04T19:21:28.962Z] ✅ Done. Total functions: 6

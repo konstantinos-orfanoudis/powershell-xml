@@ -1,0 +1,14 @@
+{
+  "routes": [
+    { "route": "/.auth/*", "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/login",   "allowedRoles": ["anonymous", "authenticated"] },
+    { "route": "/logout",  "allowedRoles": ["anonymous", "authenticated"] },
+
+    { "route": "/", "rewrite": "/login" },
+    { "route": "/*", "allowedRoles": ["authenticated"] }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/_next/*", "/.auth/*", "/api/*", "/*.css", "/*.js", "/favicon.ico"]
+  }
+}

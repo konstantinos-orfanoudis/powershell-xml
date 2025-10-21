@@ -1,0 +1,62 @@
+/* app/globals.css */
+
+/* Tailwind v4 */
+@import "tailwindcss";
+
+/* Theme tokens */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Light/Dark tokens */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Make interactive things use a pointer by default */
+@layer base {
+  /* Real, enabled controls */
+  button:not(:disabled),
+  input[type="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  a[href],
+  summary,
+  [role="button"]:not([aria-disabled="true"]),
+  [role="link"]:not([aria-disabled="true"]),
+  label[for],
+  [data-clickable] {
+    cursor: pointer;
+  }
+
+  /* Disabled states */
+  button:disabled,
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled,
+  input[type="reset"]:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+/*  select:not(:disabled),
+  textarea:not(:disabled) {
+  cursor: pointer;
+  }*/
+}
+
+/* Your base document styles */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

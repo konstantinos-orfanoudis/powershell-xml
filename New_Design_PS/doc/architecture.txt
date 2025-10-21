@@ -1,0 +1,29 @@
+[UI/CLI] -> Orchestrator -> Adapters -> Normalizer -> Merger -> Inference (opt)
+                                                -> Validator -> Exporter
+
+
+Adapters
+
+Each adapter parses a source (OpenAPI, WSDL, GraphQL, etc.) and emits a
+CanonicalSchema (entities + fields with canonical types).
+
+Normalizer
+
+Maps source-specific types to canonical types (String, Integer, Number, Boolean,
+Date, DateTime, Enum, Array, Object).
+
+Merger
+
+Unifies multiple CanonicalSchemas, dedupes entities/fields, resolves conflicts.
+
+Inference (Optional)
+
+Suggests better names, IDs, enums, descriptions. Always human-in-the-loop.
+
+Validator
+
+Quality gates: at least one entity, no empty entities, reasonable typing, etc.
+
+Exporter
+
+Writes the final schema.json in your connector format.
