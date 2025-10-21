@@ -60,7 +60,7 @@ function LoginInner() {
           <div className="space-y-2">
             <a
               href={`${LOGIN_URL}?post_login_redirect_uri=${encodeURIComponent(
-                redirect || "/"
+                "/homepage"
               )}`}
               className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2.5
                          text-white bg-azure-600 hover:bg-azure-700 active:bg-azure-800
