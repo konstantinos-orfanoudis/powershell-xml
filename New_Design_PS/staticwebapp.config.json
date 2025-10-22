@@ -1,6 +1,12 @@
 {
+  "navigationFallback": {
+    "rewrite": "/",
+    "exclude": [
+      "/api/*",
+      "/*.{css,js,png,jpg,jpeg,gif,svg,ico,webp,avif,woff,woff2,ttf,map,json,txt}"
+    ]
+  },
   "routes": [
-    { "route": "/api/ai/health", "allowedRoles": [ "anonymous" ] },
-    { "route": "/(.*)" }  
+    { "route": "/api/*" }
   ]
 }
