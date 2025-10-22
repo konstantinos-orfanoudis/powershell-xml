@@ -502,12 +502,7 @@ const logoutHref = "/.auth/logout?post_logout_redirect_uri=/login";
           >
             Clear
           </button>
-          <a
-            href={logoutHref}
-            className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 hover:bg-slate-50"
-          >
-            Sign out
-          </a>
+          
         </div>
 
         {items.length > 0 && (

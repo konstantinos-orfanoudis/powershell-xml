@@ -1,7 +1,6 @@
 {
   "routes": [
-    { "route": "/.auth/*", "allowedRoles": [ "anonymous", "authenticated" ] },
-    { "route": "/*",      "allowedRoles": [ "anonymous", "authenticated" ] }
-  ],
-  "navigationFallback": { "rewrite": "/index.html" }
+    { "route": "/api/ai/health", "allowedRoles": [ "anonymous" ] },
+    { "route": "/(.*)" }  
+  ]
 }

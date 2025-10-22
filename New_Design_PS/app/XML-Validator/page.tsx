@@ -971,12 +971,7 @@ export default function Page() {
           >
             Validate
           </button>
-          <a
-          href="/.auth/logout?post_logout_redirect_uri=/login"
-          className="inline-flex items-center rounded-md border border-rose-600 bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700 hover:border-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500"
-        >
-          Sign out
-        </a>
+          
         </div>
       </div>
 
