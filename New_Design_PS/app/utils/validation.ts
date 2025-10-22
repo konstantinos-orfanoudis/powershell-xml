@@ -1,7 +1,7 @@
 // app/utils/validation.ts
 import { parsePsText, PsMethod } from "./psParse";
 import type { SchemaEntity } from "./normalizeSchema";
-
+export const runtime = "nodejs";
 export type Severity = "error" | "warning" | "info";
 export interface Issue {
   id: string;

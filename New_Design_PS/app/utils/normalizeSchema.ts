@@ -5,7 +5,7 @@ export interface SchemaAttr {
   name: string;
   type?: UiType | string;
 }
-
+export const runtime = "nodejs";
 export interface SchemaEntity {
   name: string;
   attributes?: SchemaAttr[];

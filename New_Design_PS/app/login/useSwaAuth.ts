@@ -9,7 +9,7 @@ export type ClientPrincipal = {
   userRoles?: string[];
   claims?: { typ: string; val: string }[];
 };
-
+export const runtime = "nodejs";
 export function useSwaAuth() {
   const [user, setUser] = useState<ClientPrincipal | null>(null);
   const [loading, setLoading] = useState(true);

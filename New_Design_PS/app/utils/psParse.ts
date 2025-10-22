@@ -1,7 +1,7 @@
 // app/utils/psParse.ts
 export interface PsInput { name: string; type?: string; mandatory?: boolean; hasDefault?: boolean }
 export interface PsMethod { functionName: string; inputs: PsInput[] }
-
+export const runtime = "nodejs";
 export function parsePsText(text: string): PsMethod[] {
   // strip XML-like and block comments <# ... #>, keep strings safe
   let src = text.replace(/<[\s\S]*?>/g, (m) => (m.startsWith("<#") ? "" : m));

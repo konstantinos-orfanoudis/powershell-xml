@@ -8,7 +8,7 @@ function bad(msg: string, status = 400) {
     headers: { "content-type": "application/json" },
   });
 }
-
+export const runtime = "nodejs";
 export async function POST(req: NextRequest) {
   let body: any = null;
   try {

@@ -7,7 +7,7 @@ type SubmitResp = { ok?: boolean; request_id?: string; error?: string };
 type ResultResp =
   | { ok: true; result?: string; filename?: string; status?: string }
   | { ok: false; error?: string; pending?: boolean; status?: string };
-
+export const runtime = "nodejs";
 export default function AIDemoPage() {
   const [psText, setPsText] = useState<string>("");
   const [filename, setFilename] = useState<string>("powershell-prototypes.ps1");

@@ -7,7 +7,7 @@ const HDR_VALUE = process.env.N8N_AUTH_HEADER_VALUE; // e.g. my-secret
 function bad(msg: string, status = 400) {
   return NextResponse.json({ ok: false, error: msg }, { status });
 }
-
+export const runtime = "nodejs";
 export async function POST(req: NextRequest) {
   if (!N8N_SUBMIT_URL) return bad('server missing N8N_SUBMIT_URL', 500);
 

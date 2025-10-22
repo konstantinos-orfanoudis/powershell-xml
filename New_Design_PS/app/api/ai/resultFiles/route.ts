@@ -8,7 +8,7 @@ const HDR_VALUE = process.env.N8N_AUTH_HEADER_VALUE;
 function bad(msg: string, status = 400) {
   return NextResponse.json({ ok: false, error: msg }, { status });
 }
-
+export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   if (!N8N_RESULT_FILES_URL) return bad("server missing N8N_RESULT_URL", 500);
 

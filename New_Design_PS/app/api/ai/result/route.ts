@@ -8,7 +8,7 @@ const HDR_VALUE = process.env.N8N_AUTH_HEADER_VALUE || "";
 function bad(msg: string, status = 400) {
   return NextResponse.json({ error: msg }, { status });
 }
-
+export const runtime = "nodejs";
 // Optional: make sure Next doesn’t cache this route
 export const dynamic = "force-dynamic";
 
