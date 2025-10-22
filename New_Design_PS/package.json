@@ -49,5 +49,6 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "wait-on": "^9.0.1"
-  }
+  },
+  "engines": { "node": ">=20.16 <21" }
 }
