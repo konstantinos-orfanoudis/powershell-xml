@@ -5,7 +5,7 @@ import { buildSchemaFromSoap } from "@/lib/soap/buildSchemaFromSoap";
 import { detectUploadKind } from "@/lib/detectUpload";
 import { scimToSchema } from "@/lib/scim/scimToConnectorSchema";
 import { detectFormat } from "@/lib/detect/detectFormat";
-import Link from "next/link";
+
 
 /* ---------------- Upload types ---------------- */
 type Status = "pending" | "uploading" | "done" | "error" | "processing";
