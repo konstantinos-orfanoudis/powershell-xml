@@ -1,4 +1,5 @@
-// app/powershell-XML/page.tsx (Server Component)
+
+/// app/powershell-XML/page.tsx (Server Component)
 export const dynamic = "force-dynamic"; // prevent static prerender
 export const revalidate = 0;
 
