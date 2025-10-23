@@ -2895,14 +2895,29 @@ useEffect(() => {
     setPendingDelete(null);
   }
   // NLog.dll path (saved in localStorage)
-const [nlogPath, setNlogPath] = useState<string>(() =>
-  localStorage.getItem("nlog.path") ||
-  "C:\\Program Files\\One Identity\\One Identity Manager\\NLog.dll"
-);
+const DEFAULT_NLOG = "C:\\Program Files\\One Identity\\One Identity Manager\\NLog.dll";
 
+const [nlogPath, setNlogPath] = useState<string>(DEFAULT_NLOG);
+
+// read after mount (browser only)
 useEffect(() => {
-  localStorage.setItem("nlog.path", nlogPath || "");
+  try {
+    const saved = window.localStorage?.getItem("nlog.path");
+    if (saved) setNlogPath(saved);
+  } catch {}
+}, []);
+
+// write changes (browser only)
+useEffect(() => {
+  try {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("nlog.path", nlogPath || "");
+    }
+  } catch {
+    // ignore if storage is unavailable (private mode, quota, etc.)
+  }
 }, [nlogPath]);
+
 
 function psSingleQuoted(s: string) {
   return `'${String(s || "").replace(/'/g, "''")}'`;
