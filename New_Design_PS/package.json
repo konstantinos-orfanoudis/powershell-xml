@@ -6,12 +6,6 @@
     "dev": "concurrently --success=last -n server,open -c auto \"npm:dev:server\" \"npm:dev:open\"",
     "dev:server": "next dev -p 3000",
     "dev:open": "wait-on http://localhost:3000 && powershell -NoProfile -Command Start-Process http://localhost:3000",
-    "dev:swa": "concurrently --success=last -n swa,open -c auto \"npm:dev:swa:server\" \"npm:dev:swa:open\"",
-    "dev:swa:server": "swa start http://localhost:3000 --api-location http://localhost:3000 --run \"next dev -p 3000\" -p 4280",
-    "dev:swa:open": "wait-on http://localhost:4280 && powershell -NoProfile -Command Start-Process http://localhost:4280",
-    "start:swa": "concurrently --success=last -n swa,open -c auto \"npm:start:swa:server\" \"npm:start:swa:open\"",
-    "start:swa:server": "swa start http://localhost:3000 --api-location http://localhost:3000 --run \"next start -p 3000\" -p 4280",
-    "start:swa:open": "wait-on http://localhost:4280 && powershell -NoProfile -Command Start-Process http://localhost:4280",
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "eslint"
@@ -30,7 +24,6 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@azure/static-web-apps-cli": "^2.0.7",
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.38.0",
     "@tailwindcss/postcss": "^4",
@@ -50,5 +43,7 @@
     "typescript": "^5",
     "wait-on": "^9.0.1"
   },
-  "engines": { "node": ">=20.16 <21" }
+  "engines": {
+    "node": ">=20.16 <21"
+  }
 }
