@@ -1,55 +1,79 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - Powershell-XML-tool
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
+    env:
+      NODE_VERSION: '20.x'
+      APP_DIR: 'New_Design_PS'   # <-- exact case from your repo
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
+      # Debug: list repo root and app dir so we can see the structure in logs
+      - name: Show repo tree (top level)
+        run: ls -la
+      - name: Show app dir tree (1 level)
+        run: ls -la "${{ env.APP_DIR }}"
 
-      - name: npm install, build, and test
+      # Guard: fail early if package.json missing (catches wrong APP_DIR)
+      - name: Verify package.json
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          test -f "${{ env.APP_DIR }}/package.json" || {
+            echo "❌ package.json not found at ${{ env.APP_DIR }}/package.json"
+            exit 1
+          }
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-app
-          path: .
+      # Detect lockfile to avoid cache path errors
+      - name: Detect lockfile
+        id: lock
+        run: |
+          if [ -f "${{ env.APP_DIR }}/package-lock.json" ]; then
+            echo "has_lock=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_lock=false" >> $GITHUB_OUTPUT
+          fi
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+      - name: Setup Node (cached)
+        if: steps.lock.outputs.has_lock == 'true'
+        uses: actions/setup-node@v4
         with:
-          name: node-app
-      
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.APP_DIR }}/package-lock.json
+
+      - name: Setup Node (no cache)
+        if: steps.lock.outputs.has_lock == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install deps
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-fund --no-audit
+          fi
+
+      - name: Build
+        working-directory: ${{ env.APP_DIR }}
+        run: npm run build
+
+      - name: Archive site
+        working-directory: ${{ env.APP_DIR }}
+        run: zip -r site.zip . -x "node_modules/*" ".git/*"
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Powershell-XML-tool'
-          slot-name: 'Production'
-          package: .
+          app-name: Powershell-XML-tool
+          slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CDC3D3CDB19D4EEC84C93BB20902C636 }}
+          package: ${{ env.APP_DIR }}/site.zip
