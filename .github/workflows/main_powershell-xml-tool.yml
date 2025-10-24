@@ -10,18 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: '20.x'
-      APP_DIR: 'NEW_DESIGN_PS'   # <-- your app folder (contains package.json)
+      APP_DIR: 'NEW_DESIGN_PS'   # <-- your app folder (has package.json)
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node (with cache)
+      # Detect lockfile in APP_DIR (prevents cache path errors)
+      - name: Detect lockfile
+        id: lock
+        run: |
+          if [ -f "${{ env.APP_DIR }}/package-lock.json" ]; then
+            echo "has_lock=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_lock=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Setup Node WITH cache if lockfile exists
+      - name: Setup Node (cached)
+        if: steps.lock.outputs.has_lock == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: ${{ env.APP_DIR }}/package-lock.json
+
+      # Otherwise, setup Node without cache
+      - name: Setup Node (no cache)
+        if: steps.lock.outputs.has_lock == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install deps
         working-directory: ${{ env.APP_DIR }}
@@ -36,7 +54,7 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
         run: npm run build
 
-      # Zip the **app folder itself** so package.json sits at the root of the zip
+      # Zip the app folder itself so package.json is at the zip root
       - name: Archive site
         working-directory: ${{ env.APP_DIR }}
         run: zip -r site.zip . -x "node_modules/*" ".git/*"
