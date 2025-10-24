@@ -10,32 +10,51 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: '20.x'
-      APP_DIR: '.'          # <-- change if your app lives in a subfolder
+      APP_DIR: '.'              # change if app is in a subfolder, e.g. 'apps/powershell-parser'
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
+      # If a lockfile exists, enable caching. Otherwise, set up Node without cache.
+      - name: Detect lockfile
+        id: lock
+        run: |
+          if [ -f "${{ env.APP_DIR }}/package-lock.json" ]; then
+            echo "has_lock=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_lock=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node (with cache)
+        if: steps.lock.outputs.has_lock == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: ${{ env.APP_DIR }}/package-lock.json
 
-      - name: Install
+      - name: Setup Node (no cache)
+        if: steps.lock.outputs.has_lock == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install deps
         working-directory: ${{ env.APP_DIR }}
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-fund --no-audit
+          fi
 
       - name: Build
         working-directory: ${{ env.APP_DIR }}
         run: npm run build
 
-      # Create a clean zip with your app at the root (no node_modules / .git)
       - name: Archive site
         working-directory: ${{ env.APP_DIR }}
-        run: |
-          zip -r site.zip . -x "node_modules/*" ".git/*"
+        run: zip -r site.zip . -x "node_modules/*" ".git/*"
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
