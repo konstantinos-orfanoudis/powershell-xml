@@ -10,10 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: '20.x'
-      APP_DIR: '.'  # <-- set to subfolder if needed, e.g. 'apps/powershell-parser'
+      APP_DIR: '.'          # <-- change if your app lives in a subfolder
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -30,7 +31,7 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
         run: npm run build
 
-      # Create a clean zip WITHOUT node_modules/.git
+      # Create a clean zip with your app at the root (no node_modules / .git)
       - name: Archive site
         working-directory: ${{ env.APP_DIR }}
         run: |
