@@ -146,6 +146,16 @@ export default function UploadPage() {
   // expand modal
   const [expanded, setExpanded] = useState(false);
 
+  /* ---------- helper to apply schema to both states ---------- */
+  function applySchema(obj: unknown) {
+    if (!obj || typeof obj !== "object") return;
+    const normalized = withStableIds(obj as Schema);
+    setSchema(normalized);
+    const replacer = (k: string, v: any) => (k.startsWith("__") ? undefined : v);
+    setSchemaText(JSON.stringify(normalized, replacer, 2));
+    if (selectedEntity >= normalized.entities.length) setSelectedEntity(0);
+  }
+
   /* ---------- file picking ---------- */
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const list = e.target.files;
@@ -248,16 +258,16 @@ export default function UploadPage() {
             preferUserNameAsKey: true, // optional
           }
         );
-        setSchemaText(JSON.stringify(schemaObj, null, 2));
+        applySchema(schemaObj);
         setItems(prev => prev.map(i => ({ ...i, status: "done", message: "SCIM parsed" })));
         setSubmitting(false);
-        return; // skip AI route
+        return;
       }
     } else if (kind === "soap") {
       const texts = await Promise.all(Array.from(items).map(i => i.file.text()));
-      const schema = buildSchemaFromSoap(texts, { scope: "union" });
+      const schemaObj = buildSchemaFromSoap(texts, { scope: "union" });
+      applySchema(schemaObj);
       setItems((prev) => prev.map((i) => ({ ...i, status: "done", message: "Completed" })));
-      setSchemaText(JSON.stringify(schema, null, 2));
       setSubmitting(false);
       return;
     } else {
@@ -292,7 +302,7 @@ export default function UploadPage() {
           const docs = JSON.parse(text);
 
           const merged = withStableIds(mergeSchemas(docs));
-          setSchemaText(JSON.stringify(merged, null, 2));
+          applySchema(merged);
           setItems((prev) => prev.map((i) => ({ ...i, status: "done", message: "Completed" })));
         } else {
           setSchemaText(out.error);
@@ -333,8 +343,7 @@ export default function UploadPage() {
     const current = schema ?? { name: "Connector", version: "1.0.0", entities: [] };
     if (!current.entities[idx]) return;
     const s = structuredClone(current);
-    // allow empty names — no fallback!
-    s.entities[idx].name = name;
+    s.entities[idx].name = name; // allow empty
     setSchema(withStableIds(s));
   }
   function addAttribute(idx: number) {
@@ -367,7 +376,8 @@ export default function UploadPage() {
       __id: newId(),
       name,
       attributes: [
-        { __id: newId(), name: "id", type: "String", MultiValue: false, IsKey: true },
+        // default attribute is NOT a key anymore
+        { __id: newId(), name: "id", type: "String", MultiValue: false, IsKey: false },
       ],
     });
     setSchema(withStableIds(s));
@@ -401,8 +411,7 @@ export default function UploadPage() {
     const current = schema ?? { name: "Connector", version: "1.0.0", entities: [] };
     if (!current.entities[ei]?.attributes[ai]) return;
     const s = structuredClone(current);
-    // allow empty names — no fallback!
-    s.entities[ei].attributes[ai].name = name;
+    s.entities[ei].attributes[ai].name = name; // allow empty
     setSchema(withStableIds(s));
   }
   function updateAttrType(ei: number, ai: number, type: AttrType) {
@@ -424,7 +433,7 @@ export default function UploadPage() {
     if (!current.entities[ei]?.attributes[ai]) return;
     const s = structuredClone(current);
     s.entities[ei].attributes.forEach((attr, idx) => {
-      attr.IsKey = makeKey && idx === ai; // only the clicked one can be true
+      attr.IsKey = makeKey && idx === ai; // only the clicked one can be true; unchecking clears all
     });
     setSchema(withStableIds(s));
   }
@@ -459,7 +468,6 @@ export default function UploadPage() {
       setParseError(null);
       if (selectedEntity >= normalized.entities.length) setSelectedEntity(0);
     } catch (e: any) {
-      // keep current schema while showing the error
       setParseError(e?.message || "Invalid JSON");
     }
   }
