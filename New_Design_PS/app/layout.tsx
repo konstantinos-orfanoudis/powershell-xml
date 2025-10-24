@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "New_Design_PS",
-  description: "Generates the XML file needed for the Powershell Connector",
+  title: "Powershell-XML-tool",
+  description: "Generates the XML file and ps script needed for the Powershell Connector",
 };
 
 export default function RootLayout({
