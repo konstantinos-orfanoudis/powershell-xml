@@ -3,12 +3,18 @@
   "version": "0.1.0",
   "private": true,
   
+ 
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start -p 3000",         
+    "start": "next start -H 0.0.0.0 -p $PORT",
     "lint": "eslint"
   },
+  "engines": {
+    "node": ">=20.16 <21"
+  },
+
+
 
   "dependencies": {
     "github-markdown-css": "^5.8.1",
@@ -42,8 +48,5 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "wait-on": "^9.0.1"
-  },
-  "engines": {
-    "node": ">=20.16 <21"
   }
 }
