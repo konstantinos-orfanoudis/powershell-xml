@@ -2,14 +2,14 @@
   "name": "powershell-parser",
   "version": "0.1.0",
   "private": true,
+  
   "scripts": {
-    "dev": "concurrently --success=last -n server,open -c auto \"npm:dev:server\" \"npm:dev:open\"",
-    "dev:server": "next dev -p 3000",
-    "dev:open": "wait-on http://localhost:3000 && powershell -NoProfile -Command Start-Process http://localhost:3000",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "next start -p 3000",         
     "lint": "eslint"
   },
+
   "dependencies": {
     "github-markdown-css": "^5.8.1",
     "highlight.js": "^11.11.1",
