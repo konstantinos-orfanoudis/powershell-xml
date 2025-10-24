@@ -2016,9 +2016,11 @@ function reflectInputsEverywhere(nextFns: Fn[]): Fn[] {
 
   type ConnFamily = "SQL" | "REST" | "SOAP" | "SCIM";
   type SqlMode = "Discrete" | "ConnString";
-  type RestAuth = "None" | "Basic" | "Bearer";
+  type RestAuth = "None" | "Basic" | "Bearer" | "OAuth2CC" | "HMAC" | "NTLM" | "ApiKey";
   type SoapMode = "WsAddressing" | "Plain";
-  type ScimAuth = "None" | "Bearer";
+  // replace your current ScimAuth with this:
+type ScimAuth = "None" | "Basic" | "Bearer" | "OAuth2CC" | "APIKeyHeader" | "HMAC" | "NTLM";
+
   type SecurityChoice =
     | "None"
     | "TLS"
@@ -2171,162 +2173,97 @@ ${script}
   
 
   function connParamsForSelection(): PsParam[] {
-    let base: PsParam[] = [];
-    if (connFamily === "SQL") {
-      base =
-        sqlMode === "Discrete"
-          ? [
-              makeParam({ name: "Server", type: "String", mandatory: true, source: "Connection" }),
-              makeParam({ name: "Port", type: "Int", mandatory: false, source: "Connection" }),
-              makeParam({
-                name: "Database",
-                type: "String",
-                mandatory: true,
-                source: "Connection",
-              }),
-              makeParam({
-                name: "UserName",
-                type: "String",
-                mandatory: true,
-                source: "Connection",
-              }),
-              makeParam({
-                name: "Password",
-                type: "String",
-                mandatory: true,
-                source: "Connection",
-              }),
-            ]
-          : [
-              makeParam({
-                name: "ConnectionString",
-                type: "String",
-                mandatory: true,
-                source: "Connection",
-              }),
-            ];
-    } else if (connFamily === "REST") {
-      const common = [
-        makeParam({ name: "BaseUrl", type: "String", mandatory: true, source: "Connection" }),
-        makeParam({
-          name: "TimeoutSeconds",
-          type: "Int",
-          mandatory: false,
-          source: "Connection",
-        }),
-      ];
-      base =
-        restAuth === "Basic"
-          ? [
-              ...common,
-              makeParam({ name: "Username", type: "String", mandatory: true, source: "Connection" }),
-              makeParam({ name: "Password", type: "String", mandatory: true, source: "Connection" }),
-            ]
-          : restAuth === "Bearer"
-          ? [...common, makeParam({ name: "BearerToken", type: "String", mandatory: true, source: "Connection" })]
-          : common;
-    } else if (connFamily === "SOAP") {
+  // tiny helper to keep calls short without introducing new types/symbols
+  const req = (name: string, type: UiType): PsParam =>
+    makeParam({ name, type, mandatory: true, source: "Connection" });
+  const opt = (name: string, type: UiType): PsParam =>
+    makeParam({ name, type, mandatory: false, source: "Connection" });
+
+  let base: PsParam[] = [];
+
+  if (connFamily === "SQL") {
+    // Minimal SQL
+    if (sqlMode === "Discrete") {
       base = [
-        makeParam({ name: "ServiceUrl", type: "String", mandatory: true, source: "Connection" }),
-        makeParam({
-          name: "TimeoutSeconds",
-          type: "Int",
-          mandatory: false,
-          source: "Connection",
-        }),
+        req("Server", "String"),
+        req("Database", "String"),
+        req("UserName", "String"),
+        req("Password", "String"),
+        opt("Port", "Int"), // optional, common but not required everywhere
       ];
-      if (soapMode === "WsAddressing") {
-        base.push(makeParam({ name: "Action", type: "String", mandatory: true, source: "Connection" }));
-      }
     } else {
-      base = [
-        makeParam({ name: "BaseUrl", type: "String", mandatory: true, source: "Connection" }),
-        makeParam({
-          name: "TimeoutSeconds",
-          type: "Int",
-          mandatory: false,
-          source: "Connection",
-        }),
-      ];
-      if (scimAuth === "Bearer") {
-        base.push(makeParam({ name: "BearerToken", type: "String", mandatory: true, source: "Connection" }));
-      }
+      base = [req("ConnectionString", "String")];
     }
-/** Write globals purely from the current connection selection */
+  } else if (connFamily === "REST") {
+    // Minimal REST
+    base = [req("BaseUrl", "String")];
 
-
-    const extras: PsParam[] = [];
-    switch (security) {
-      case "TLS":
-        extras.push(makeParam({ name: "UseTLS", type: "Bool", mandatory: false, source: "Connection" }));
-        break;
-      case "mTLS":
-        extras.push(
-          makeParam({
-            name: "ClientCertificatePath",
-            type: "String",
-            mandatory: true,
-            source: "Connection",
-          }),
-          makeParam({
-            name: "ClientCertificatePassword",
-            type: "String",
-            mandatory: true,
-            source: "Connection",
-          }),
-          makeParam({
-            name: "ClientCertificateThumbprint",
-            type: "String",
-            mandatory: false,
-            source: "Connection",
-          })
-        );
-        break;
-      case "APIKeyHeader":
-        extras.push(
-          makeParam({ name: "ApiKey", type: "String", mandatory: true, source: "Connection" }),
-          makeParam({
-            name: "ApiKeyHeader",
-            type: "String",
-            mandatory: false,
-            source: "Connection",
-          })
-        );
-        break;
-      case "WSUserPass":
-        extras.push(
-          makeParam({ name: "WsUsername", type: "String", mandatory: true, source: "Connection" }),
-          makeParam({ name: "WsPassword", type: "String", mandatory: true, source: "Connection" })
-        );
-        break;
-      case "SSLRequired":
-        if (connFamily === "SQL") {
-          extras.push(
-            makeParam({
-              name: "Encrypt",
-              type: "Bool",
-              mandatory: false,
-              source: "Connection",
-            }),
-            makeParam({
-              name: "TrustServerCertificate",
-              type: "Bool",
-              mandatory: false,
-              source: "Connection",
-            })
-          );
-        } else {
-          extras.push(makeParam({ name: "UseTLS", type: "Bool", mandatory: false, source: "Connection" }));
-        }
-        break;
-      case "None":
-      default:
-        break;
+    if (restAuth === "Basic") {
+      base.push(req("Username", "String"), req("Password", "String"));
+    } else if (restAuth === "Bearer") {
+      base.push(req("BearerToken", "String"));
+    } else if (restAuth === "OAuth2CC") {
+      base.push(req("TokenUrl", "String"), req("ClientId", "String"), req("ClientSecret", "String"));
+    } else if (restAuth === "ApiKey") {
+      base.push(req("ApiKey", "String")); // header name can default internally
+    } else if (restAuth === "HMAC") {
+      base.push(req("AccessKeyId", "String"), req("SecretKey", "String"));
+    } else if (restAuth === "NTLM") {
+      base.push(req("NtlmUsername", "String"), req("NtlmPassword", "String"), opt("Domain", "String"));
     }
-    const map = new Map<string, PsParam>();
-    [...base, ...extras].forEach((p) => map.set(p.name, p));
-    return [...map.values()];
+  } else if (connFamily === "SOAP") {
+    // Minimal SOAP
+    base = [req("ServiceUrl", "String")];
+    if (soapMode === "WsAddressing") {
+      base.push(req("Action", "String"));
+    }
+  } else {
+    // SCIM (minimal)
+    base = [req("BaseUrl", "String")];
+
+    if (scimAuth === "Basic") {
+      base.push(req("Username", "String"), req("Password", "String"));
+    } else if (scimAuth === "Bearer") {
+      base.push(req("BearerToken", "String"));
+    } else if (scimAuth === "OAuth2CC") {
+      base.push(req("TokenUrl", "String"), req("ClientId", "String"), req("ClientSecret", "String"));
+    } else if (scimAuth === "APIKeyHeader") {
+      base.push(req("ApiKey", "String"));
+    } else if (scimAuth === "HMAC") {
+      base.push(req("AccessKeyId", "String"), req("SecretKey", "String"));
+    } else if (scimAuth === "NTLM") {
+      base.push(req("NtlmUsername", "String"), req("NtlmPassword", "String"), opt("Domain", "String"));
+    }
   }
+
+  // Security add-ons (only essentials)
+  const extras: PsParam[] = [];
+  switch (security) {
+    case "mTLS":
+      extras.push(req("ClientCertificatePath", "String"), req("ClientCertificatePassword", "String"));
+      break;
+    case "APIKeyHeader":
+      // As a *security* layer (separate from REST/SCIM auth), just the key
+      extras.push(req("ApiKey", "String"));
+      break;
+    case "WSUserPass":
+      // Only meaningful for SOAP; keep minimal pair
+      extras.push(req("WsUsername", "String"), req("WsPassword", "String"));
+      break;
+    // TLS / SSLRequired / None → no extra required fields here
+  }
+
+  // De-dupe by name while preserving first occurrence
+  const seen = new Set<string>();
+  const uniq: PsParam[] = [];
+  for (const p of [...base, ...extras]) {
+    if (!p.name || seen.has(p.name)) continue;
+    seen.add(p.name);
+    uniq.push(p);
+  }
+  return uniq;
+}
+
 
   function refreshSelectedConnParams() {
     setFunctions((prev) => {
@@ -4160,6 +4097,9 @@ ${selected!.script || ""}`;
                             <option>None</option>
                             <option>Basic</option>
                             <option>Bearer</option>
+                            <option value="OAuth2CC">OAuth2CC</option>
+                            <option value="HMAC">HMAC</option>
+                            <option value="NTLM">NTLM</option>
                           </select>
                         </div>
                       )}
@@ -4185,10 +4125,16 @@ ${selected!.script || ""}`;
                             onChange={(e) => setScimAuth(e.target.value as ScimAuth)}
                           >
                             <option>None</option>
+                            <option>Basic</option>
                             <option>Bearer</option>
+                            <option value="OAuth2CC">OAuth2CC</option>
+                            <option>APIKeyHeader</option>
+                            <option>HMAC</option>
+                            <option>NTLM</option>
                           </select>
                         </div>
                       )}
+
 
                       {/* Security */}
                       <div className="flex items-center gap-2">
