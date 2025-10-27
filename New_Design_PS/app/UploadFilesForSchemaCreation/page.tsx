@@ -517,7 +517,8 @@ export default function UploadPage() {
   onClick={() => {
     window.location.href = "/.auth/logout?post_logout_redirect_uri=/";
   }}
-  className="inline-flex items-center justify-center rounded-md border px-3 py-2 hover:bg-slate-50"
+   className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-white
+             hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
 >
   Sign out
 </button>
