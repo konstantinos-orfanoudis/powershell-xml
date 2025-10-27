@@ -2,6 +2,7 @@
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
 
+
 /* ============ Types & helpers ============ */
 
 type ErrKind = "error" | "warn" | "info";
@@ -971,7 +972,14 @@ export default function Page() {
           >
             Validate
           </button>
-          
+          <button
+  onClick={() => {
+    window.location.href = "/.auth/logout?post_logout_redirect_uri=/";
+  }}
+  className="inline-flex items-center justify-center rounded-md border px-3 py-2 hover:bg-slate-50"
+>
+  Sign out
+</button>
         </div>
       </div>
 

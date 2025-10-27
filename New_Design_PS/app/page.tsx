@@ -3,7 +3,6 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-
 type Step = {
   key: string;
   label: string;

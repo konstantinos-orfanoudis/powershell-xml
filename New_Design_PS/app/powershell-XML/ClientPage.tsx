@@ -9,6 +9,7 @@ import { parsePsFileToFns,parseFnName  } from "@/lib/ps-parse"; // adjust path a
 import {  buildXmlFromUploadPw, classifyParamsForUpload, exitUploadMode, isUploadMode, startUploadMode} from "@/lib/uploadPwxml";
 
 
+
 type UiType = "String" | "Bool" | "Int" | "DateTime";
 type SourceType = "Schema" | "Connection" | "Manual";
 
@@ -3792,7 +3793,14 @@ ${selected!.script || ""}`;
             className="hidden"
             onChange={handleUploadPwChange}
           />
-
+          <button
+  onClick={() => {
+    window.location.href = "/.auth/logout?post_logout_redirect_uri=/";
+  }}
+  className="inline-flex items-center justify-center rounded-md border px-3 py-2 hover:bg-slate-50"
+>
+  Sign out
+</button>
           
           <div className="ml-auto flex items-center gap-1">
   <label className="text-sm text-white/80">Path for NLog.dll</label>
@@ -3822,6 +3830,7 @@ ${selected!.script || ""}`;
             gap-3
           "
         >
+          
           
           {/* === ASIDE === */}
           <aside className="w-[280px] shrink-0 border-r bg-white -ml-2 lg:-ml-3">
