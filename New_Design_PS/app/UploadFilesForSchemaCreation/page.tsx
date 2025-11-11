@@ -180,7 +180,7 @@ export default function UploadPage() {
   }
 
   /* ---------- fixed-delay polling of result route ---------- */
-  const POLL_DELAYS_MS = [10000, 15000, 15000, 10000, 15000];
+  const POLL_DELAYS_MS = [30000, 15000, 15000, 10000, 15000];
   async function pollResultWithDelays(requestId: string) {
     for (let i = 0; i < POLL_DELAYS_MS.length; i++) {
       await new Promise((r) => setTimeout(r, POLL_DELAYS_MS[i]));

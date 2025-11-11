@@ -2,8 +2,6 @@
   "name": "powershell-parser",
   "version": "0.1.0",
   "private": true,
-  
- 
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
@@ -13,13 +11,12 @@
   "engines": {
     "node": ">=20.16 <21"
   },
-
-
-
   "dependencies": {
     "github-markdown-css": "^5.8.1",
     "highlight.js": "^11.11.1",
+    "lucide-react": "^0.552.0",
     "next": "15.5.2",
+    "openai": "^6.7.0",
     "pdf-parse": "^2.3.12",
     "react": "19.1.0",
     "react-dom": "19.1.0",
