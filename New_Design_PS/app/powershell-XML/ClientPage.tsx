@@ -59,6 +59,7 @@ type SchemaAttr = {
   type?: string;
   IsKey?: boolean;        // from schema.json
   MultiValue?: boolean;   // from schema.json
+  AutoFill?: boolean;     // <-- NEW: from schema.json
 };
 type SchemaEntity = { name: string; attributes?: SchemaAttr[] };
 function getKeyName(attrs: Array<{ name: string; type?: string; IsKey?: boolean }>): string {
@@ -427,11 +428,12 @@ function seedPropMetaWithRBs(schema: { entities: SchemaEntity[] }) {
       type: ui(a.type),
       IsKey: !!a.IsKey,
       MultiValue: !!a.MultiValue,
+      AutoFill: !!a.AutoFill,
     }));
 
-    // display = first key; else 'id'/ '*id'; else first attr
     const keyName = getKeyName(e.attributes || []);
-    const display = keyName ||
+    const display =
+      keyName ||
       attrs.find(a => /^id$/i.test(a.name))?.name ||
       attrs.find(a => /id$/i.test(a.name))?.name ||
       attrs[0]?.name;
@@ -442,17 +444,17 @@ function seedPropMetaWithRBs(schema: { entities: SchemaEntity[] }) {
 
     const table: any = {};
     for (const a of attrs) {
-      const isKey = a.IsKey || a.name === keyName;
+      const isKey = !!a.IsKey; // <-- ONLY honor explicit IsKey
 
-      // No Create/Update mapping for key props
       const mapForCreate = !isKey && hasInsert ? [{ parameter: a.name, toProperty: a.name }] : [];
       const mapForUpdate = !isKey && hasUpdate ? [{ parameter: a.name, toProperty: a.name }] : [];
 
       table[a.name] = {
         type: a.type,
-        isUnique: isKey,                         // <— drives IsUniqueKey="true"
-        isDisplay: isKey || a.name === display,  // <— keys are also display
-        isMultiValue: !!a.MultiValue,            // <— drives IsMultiValue="true"
+        isUnique: isKey,                 // <-- drives IsUniqueKey
+        isDisplay: isKey || a.name === display,
+        isMultiValue: !!a.MultiValue,
+        isAutoFill: !!a.AutoFill,
         isMandatory: false,
         access: "None",
         returnBinds: [{ commandResultOf: listFn, path: a.name }],
@@ -465,11 +467,9 @@ function seedPropMetaWithRBs(schema: { entities: SchemaEntity[] }) {
     }
     meta[ent] = table;
   }
-
   localStorage.setItem("prop.meta.v1", JSON.stringify(meta));
   return meta;
 }
-
 
 function seedConfirmedTables(schema: { entities: SchemaEntity[] }) {
   const tables = (schema.entities || []).map((e) => e.name);
@@ -1293,45 +1293,7 @@ ${finalSetLines}
 
 
 
-  function stripKeyModSections(xmlIn: string): string {
-    let xml = xmlIn || "";
-
-    xml = xml.replace(
-      /<Property\b([^>]*?)>([\s\S]*?)<\/Property>/gi,
-      (whole, attrStr: string, inner: string) => {
-        if (!/IsUniqueKey\s*=\s*"true"/i.test(attrStr)) return whole;
-
-        const nameMatch = attrStr.match(/\bName="([^"]+)"/i);
-        const propName = nameMatch ? nameMatch[1] : "";
-
-        let body = inner.replace(/<ModifiedBy>[\s\S]*?<\/ModifiedBy>/gi, "");
-
-        body = body.replace(
-          /<CommandMappings>([\s\S]*?)<\/CommandMappings>/gi,
-          (_cmWhole, cmInner: string) => {
-            let cleaned = cmInner;
-            if (propName) {
-              const selfClosing = new RegExp(
-  String.raw`<Map\b[^>]*\bToCommand="(?:Create|Update|Modify)-[^"]+"\b[^>]*\bParameter="${propName}"[^>]*/>\s*`,
-  "gi"
-);
-              cleaned = cleaned.replace(selfClosing, "");
-              const openClose = new RegExp(
-  String.raw`<Map\b[^>]*\bToCommand="(?:Create|Update|Modify)-[^"]+"\b[^>]*\bParameter="${propName}"[^>]*>\s*<\/Map>\s*`,
-  "gi"
-);
-              cleaned = cleaned.replace(openClose, "");
-            }
-            return `<CommandMappings>${cleaned}</CommandMappings>`;
-          }
-        );
-
-        return `<Property${attrStr}>${body}</Property>`;
-      }
-    );
-
-    return xml;
-  }
+  
 
   /** Convert
  *   <ReadConfiguration><ListingCommand Command="X">…</ListingCommand></ReadConfiguration>
@@ -1952,6 +1914,55 @@ function sweepDedupeReadConfigurations(xmlIn: string): string {
   return xml;
 }
 
+function applyAutoFillAndKeyModSections(xmlIn: string): string {
+  let xml = xmlIn || "";
+  const meta = JSON.parse(localStorage.getItem("prop.meta.v1") || "{}") as Record<
+    string,
+    Record<string, { isAutoFill?: boolean; isUnique?: boolean }>
+  >;
+
+  if (!meta || typeof meta !== "object") return xml;
+
+  const classesRe = /(<Class\b[^>]*\bName="([^"]+)"[^>]*>)([\s\S]*?)(<\/Class>)/gi;
+
+  xml = xml.replace(classesRe, (_whole, open: string, className: string, mid: string, close: string) => {
+    const entMeta = meta?.[className] || {};
+    if (!entMeta || typeof entMeta !== "object") return `${open}${mid}${close}`;
+
+    const nextMid = mid.replace(
+      /<Property\b([^>]*)>([\s\S]*?)<\/Property>/gi,
+      (whole: string, attrStr: string, inner: string) => {
+        const nameMatch = attrStr.match(/\bName="([^"]+)"/i);
+        const propName = (nameMatch?.[1] || "").trim();
+        if (!propName) return whole;
+
+        const pMeta = entMeta[propName] || {};
+
+        // 1) Remove any existing IsUniqueKey="…"
+        let attrs = attrStr.replace(/\bIsUniqueKey\s*=\s*"(?:true|false)"/gi, "").trim();
+
+        // 2) Re-add ONLY if meta says it's unique (i.e., IsKey true)
+        if (pMeta.isUnique) {
+          attrs = attrs ? `${attrs} IsUniqueKey="true"` : `IsUniqueKey="true"`;
+        }
+
+        // 3) AutoFill → drop ModifiedBy block
+        let body = inner;
+        if (pMeta.isAutoFill) {
+          body = body.replace(/<ModifiedBy>[\s\S]*?<\/ModifiedBy>\s*/gi, "");
+        }
+
+        return `<Property ${attrs}>${body}</Property>`;
+      }
+    );
+
+    return `${open}${nextMid}${close}`;
+  });
+
+  return xml;
+}
+
+
 function rebuildXmlPreview() {
   const { xml } = buildXmlAllConfirmedFromLocalStorage();
   let x = xml;
@@ -1964,7 +1975,10 @@ function rebuildXmlPreview() {
 
   // Keep your other cleanups (do NOT re-insert global SetParameters anywhere)
   x = pruneGetAuthorizationParams(x); // keeps only current connection globals in Get-Authorization
-  x = stripKeyModSections(x);        // remove ModifiedBy + Create/Update mapping for key props
+
+  // ✨ NEW behavior here:
+  x = applyAutoFillAndKeyModSections(x); // AutoFill → drop ModifiedBy; Key → ensure IsUniqueKey="true"
+
   x = sweepDedupeReadConfigurations(x); // final dedupe/normalize of RC blocks
 
   setXmlLive(x);

@@ -38,8 +38,15 @@ function isSchema(x: any): x is Schema {
 }
 
 /* ---------------- Schema model ---------------- */
-type AttrType = "String" | "Int"  | "Bool" | "Datetime";
-type Attribute = { __id?: string; name: string; type: AttrType; MultiValue: boolean; IsKey?: boolean };
+type AttrType = "String" | "Int" | "Bool" | "Datetime";
+type Attribute = {
+  __id?: string;
+  name: string;
+  type: AttrType;
+  MultiValue: boolean;
+  IsKey?: boolean;
+  AutoFill?: boolean; // NEW
+};
 type Entity = { __id?: string; name: string; attributes: Attribute[] };
 type Schema = { name: string; version: string; entities: Entity[] };
 
@@ -85,6 +92,7 @@ function withStableIds(s: Schema): Schema {
           type: (a.type as AttrType) || "String",
           MultiValue: !!a.MultiValue,
           IsKey: !!val,
+          AutoFill: !!(a as any).AutoFill, // NEW
         };
       }),
     })),
@@ -96,11 +104,13 @@ function withStableIds(s: Schema): Schema {
 function mergeSchemas(input: unknown): Schema {
   const docs: Schema[] = Array.isArray(input)
     ? (input as unknown[]).filter(isSchema)
-    : isSchema(input) ? [input] : [];
+    : isSchema(input)
+    ? [input]
+    : [];
 
   const base: Schema = {
-    name: docs.find(d => d.name)?.name ?? "Connector",
-    version: docs.find(d => d.version)?.version ?? "1.0.0",
+    name: docs.find((d) => d.name)?.name ?? "Connector",
+    version: docs.find((d) => d.version)?.version ?? "1.0.0",
     entities: [],
   };
 
@@ -118,7 +128,7 @@ function mergeSchemas(input: unknown): Schema {
       }
 
       // de-dupe attributes by name
-      const have = new Set(target.attributes.map(a => a.name));
+      const have = new Set(target.attributes.map((a) => a.name));
       for (const a of e.attributes ?? []) {
         if (a?.name && !have.has(a.name)) {
           target.attributes.push(a);
@@ -244,27 +254,23 @@ export default function UploadPage() {
     if (!items.length) return;
     setSubmitting(true);
 
-    const kind = await detectUploadKind(items.map(i => i.file));
+    const kind = await detectUploadKind(items.map((i) => i.file));
     if (kind === "scim") {
-      const files = items.map(i => i.file);
+      const files = items.map((i) => i.file);
       const { schemas, resourceTypes } = await readScimDocs(files);
       if (schemas.length || resourceTypes.length) {
-        const schemaObj = scimToSchema(
-          resourceTypes,
-          schemas,
-          {
-            schemaName: "Connector",
-            version: "1.0.0",
-            preferUserNameAsKey: true, // optional
-          }
-        );
+        const schemaObj = scimToSchema(resourceTypes, schemas, {
+          schemaName: "Connector",
+          version: "1.0.0",
+          preferUserNameAsKey: true, // optional
+        });
         applySchema(schemaObj);
-        setItems(prev => prev.map(i => ({ ...i, status: "done", message: "SCIM parsed" })));
+        setItems((prev) => prev.map((i) => ({ ...i, status: "done", message: "SCIM parsed" })));
         setSubmitting(false);
         return;
       }
     } else if (kind === "soap") {
-      const texts = await Promise.all(Array.from(items).map(i => i.file.text()));
+      const texts = await Promise.all(Array.from(items).map((i) => i.file.text()));
       const schemaObj = buildSchemaFromSoap(texts, { scope: "union" });
       applySchema(schemaObj);
       setItems((prev) => prev.map((i) => ({ ...i, status: "done", message: "Completed" })));
@@ -356,6 +362,7 @@ export default function UploadPage() {
       type: "String",
       MultiValue: false,
       IsKey: false,
+      AutoFill: false, // NEW
     });
     setSchema(withStableIds(s));
   }
@@ -370,14 +377,14 @@ export default function UploadPage() {
   function addEntity() {
     const empty: Schema = { name: "Connector", version: "1.0.0", entities: [] };
     const s = structuredClone(schema ?? empty);
-    const existingNames = s.entities.map(e => e.name);
+    const existingNames = s.entities.map((e) => e.name);
     const name = uniqueEntityName("Entity", existingNames);
     s.entities.push({
       __id: newId(),
       name,
       attributes: [
         // default attribute is NOT a key anymore
-        { __id: newId(), name: "id", type: "String", MultiValue: false, IsKey: false },
+        { __id: newId(), name: "id", type: "String", MultiValue: false, IsKey: false, AutoFill: false }, // NEW
       ],
     });
     setSchema(withStableIds(s));
@@ -435,6 +442,13 @@ export default function UploadPage() {
     s.entities[ei].attributes.forEach((attr, idx) => {
       attr.IsKey = makeKey && idx === ai; // only the clicked one can be true; unchecking clears all
     });
+    setSchema(withStableIds(s));
+  }
+  function updateAttrAutoFill(ei: number, ai: number, val: boolean) {
+    const current = schema ?? { name: "Connector", version: "1.0.0", entities: [] };
+    if (!current.entities[ei]?.attributes[ai]) return;
+    const s = structuredClone(current);
+    s.entities[ei].attributes[ai].AutoFill = val;
     setSchema(withStableIds(s));
   }
 
@@ -514,14 +528,14 @@ export default function UploadPage() {
             Clear
           </button>
           <button
-  onClick={() => {
-    window.location.href = "/.auth/logout?post_logout_redirect_uri=/";
-  }}
-   className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-white
+            onClick={() => {
+              window.location.href = "/.auth/logout?post_logout_redirect_uri=/";
+            }}
+            className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-white
              hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
->
-  Sign out
-</button>
+          >
+            Sign out
+          </button>
         </div>
 
         {items.length > 0 && (
@@ -665,13 +679,13 @@ export default function UploadPage() {
                     <div key={a.__id || ai} className="grid grid-cols-12 gap-2 items-center">
                       {/* Name */}
                       <input
-                        className="col-span-4 rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+                        className="col-span-3 rounded-md border border-slate-300 px-3 py-1.5 text-sm"
                         value={a.name}
                         onChange={(e) => updateAttrName(selectedEntity, ai, e.target.value)}
                       />
                       {/* Type */}
                       <select
-                        className="col-span-3 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+                        className="col-span-2 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
                         value={a.type}
                         onChange={(e) => updateAttrType(selectedEntity, ai, e.target.value as AttrType)}
                       >
@@ -690,8 +704,16 @@ export default function UploadPage() {
                         />
                         <span>MultiValue</span>
                       </label>
-                      {/* Key (single per entity) */}
                       <label className="col-span-2 inline-flex items-center gap-2 text-sm">
+    <input
+      type="checkbox"
+      checked={!!a.AutoFill}
+      onChange={(e) => updateAttrAutoFill(selectedEntity, ai, e.target.checked)}
+    />
+    <span>AutoFill</span>
+  </label>
+                      {/* Key (single per entity) */}
+                      <label className="col-span-1 inline-flex items-center gap-1 text-sm">
                         <input
                           type="checkbox"
                           checked={!!a.IsKey}
@@ -699,6 +721,7 @@ export default function UploadPage() {
                         />
                         <span>Key</span>
                       </label>
+                      
                       {/* Remove */}
                       <button
                         className="col-span-1 text-xs text-rose-700 hover:text-rose-900"
@@ -737,7 +760,7 @@ export default function UploadPage() {
             </button>
           </div>
           <textarea
-            className="w-full h-[520px] font-mono text-xs leading-5 p-3 outline-none"
+            className="w-full h=[520px] h-[520px] font-mono text-xs leading-5 p-3 outline-none"
             value={schemaText}
             onChange={(e) => onSchemaTextChange(e.target.value)}
             spellCheck={false}
