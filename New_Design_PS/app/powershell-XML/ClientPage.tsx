@@ -455,7 +455,7 @@ function seedPropMetaWithRBs(schema: { entities: SchemaEntity[] }) {
         isDisplay: isKey || a.name === display,
         isMultiValue: !!a.MultiValue,
         isAutoFill: !!a.AutoFill,
-        isMandatory: false,
+        isMandatory: !a.AutoFill,
         access: "None",
         returnBinds: [{ commandResultOf: listFn, path: a.name }],
         referenceTargets: [],
