@@ -3008,7 +3008,7 @@ function buildLoggerBlock(nlog: string) {
     URL.revokeObjectURL(url);
   }
 
-  function openPreviewBlob(contents: string, title = "preview.ps1") {
+  function openPreviewBlob(contents: string, title = "preview.psm1") {
     const blob = new Blob([contents], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank", "noopener,noreferrer");
@@ -3361,7 +3361,7 @@ function forceUpsertConnectionParameters(
 }
 
 /**
- * Builds the final XML for an uploaded .ps1 using the uploadPwxml library.
+ * Builds the final XML for an uploaded .psm1 using the uploadPwxml library.
  * – Figures out schema
  * – Gets current base XML (or falls back to builder output)
  * – Lets uploadPwxml apply connection-param logic, PredefinedCommands, RC/Method SetParameters, etc.
@@ -3436,12 +3436,12 @@ useEffect(() => {
 
   const handlePreviewPw = () => {
     const contents = buildCombinedPs(functions);
-    openPreviewBlob(contents, "combined.ps1");
+    openPreviewBlob(contents, "combined.psm1");
   };
 
   const handleDownloadPw = () => {
     const contents = buildCombinedPs(functions);
-    const safe = "AllFunctions.ps1";
+    const safe = "AllFunctions.psm1";
     downloadTextFile(safe, contents);
   };
 
@@ -3613,7 +3613,7 @@ ${specText}
 ### SCHEMA
 ${schemaText}
 
-### CODE: ${selected!.name}.ps1
+### CODE: ${selected!.name}.psm1
 ${selected!.script || ""}`;
 
 
@@ -3621,7 +3621,7 @@ ${selected!.script || ""}`;
       body,                    // system-ish rules
       message,                 // user's prompt
       fileText: compositeFileText || "",              // current function text
-      filename: `${fn.name || "Function"}.ps1`,
+      filename: `${fn.name || "Function"}.psm1`,
     };
 
     // Submit job
@@ -3803,7 +3803,7 @@ ${selected!.script || ""}`;
           <input
             ref={pwInputRef}
             type="file"
-            accept=".ps1,text/plain"
+            accept=".psm1,text/plain"
             className="hidden"
             onChange={handleUploadPwChange}
           />
